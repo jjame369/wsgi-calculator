@@ -1,3 +1,5 @@
+import traceback
+
 """
 For your homework this week, you'll be creating a wsgi application of
 your own.
@@ -53,20 +55,53 @@ def add(*args):
 
 # TODO: Add functions for handling more arithmetic operations.
 
+
+def subtract(*args):
+    pass
+
+
+def multiply(*args):
+    pass
+
+
+def divide(*args):
+    pass
+
+
+def home():
+    body = ['<h1>My Bookshelf</h1>', '<ul>']
+    return '\n', body
+
+
 def resolve_path(path):
     """
     Should return two values: a callable and an iterable of
     arguments.
     """
 
-    # TODO: Provide correct values for func and args. The
-    # examples provide the correct *syntax*, but you should
-    # determine the actual values of func and args using the
-    # path.
-    func = add
-    args = ['25', '32']
+    def resolve_path(path):
+        funcs = {
+            '': home,
+            'add': add,
+            'subtract': subtract,
+            'multiply': multiply,
+            'divide': divide,
+        }
 
-    return func, args
+        path = path.strip('/').split('/')
+
+        func_name = path[0]
+        args = path[1:]
+
+        try:
+            func = funcs[func_name]
+        except KeyError:
+            raise NameError
+
+        return func, args
+
+
+
 
 def application(environ, start_response):
     headers = [("Content-type", "text/html")]
@@ -84,6 +119,9 @@ def application(environ, start_response):
         status = "500 Internal Server Error"
         body = "<h1>Internal Server Error</h1>"
         print(traceback.format_exc())
+    except ZeroDivisionError:
+        status = "400 Unauthorized error "
+        body = "<h1> You can not divide by 0 </h1>"
     finally:
         headers.append(('Content-length', str(len(body))))
         start_response(status, headers)
@@ -91,6 +129,6 @@ def application(environ, start_response):
 
 
 if __name__ == '__main__':
-    # TODO: Insert the same boilerplate wsgiref simple
-    # server creation that you used in the book database.
-    pass
+    from wsgiref.simple_server import make_server
+    srv = make_server('localhost', 8080, application)
+    srv.serve_forever()
