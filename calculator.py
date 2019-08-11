@@ -46,61 +46,55 @@ To submit your homework:
 
 def add(*args):
     """ Returns a STRING with the sum of the arguments """
-
-    # TODO: Fill sum with the correct value, based on the
-    # args provided.
-    sum = "0"
-
-    return sum
-
-# TODO: Add functions for handling more arithmetic operations.
+    add_numbers = [int(i) for i in args]
+    add_result = str(sum(add_numbers))
+    return add_result
 
 
 def subtract(*args):
-    pass
+    subtract_numbers = [int(i) for i in args]
+    subtract_result = str(subtract_numbers[0] - subtract_numbers[1])
+    return subtract_result
 
 
 def multiply(*args):
-    pass
+    multiply_numbers = [int(i) for i in args]
+    multiply_result = str(multiply_numbers[0] * multiply_numbers[1])
+    return multiply_result
 
 
 def divide(*args):
-    pass
+    divide_numbers = [int(i) for i in args]
+    divide_result = str(int(divide_numbers[0] / divide_numbers[1]))
+    return divide_result
 
 
 def home():
-    body = ['<h1>My Bookshelf</h1>', '<ul>']
-    return '\n', body
+    with open('home_page.html') as how_to:
+        read_data = how_to.read()
+    return read_data
 
 
 def resolve_path(path):
-    """
-    Should return two values: a callable and an iterable of
-    arguments.
-    """
+    funcs = {
+        '': home,
+        'add': add,
+        'subtract': subtract,
+        'multiply': multiply,
+        'divide': divide,
+    }
 
-    def resolve_path(path):
-        funcs = {
-            '': home,
-            'add': add,
-            'subtract': subtract,
-            'multiply': multiply,
-            'divide': divide,
-        }
+    path = path.strip('/').split('/')
 
-        path = path.strip('/').split('/')
+    func_name = path[0]
+    args = path[1:]
 
-        func_name = path[0]
-        args = path[1:]
+    try:
+        func = funcs[func_name]
+    except KeyError:
+        raise NameError
 
-        try:
-            func = funcs[func_name]
-        except KeyError:
-            raise NameError
-
-        return func, args
-
-
+    return func, args
 
 
 def application(environ, start_response):
